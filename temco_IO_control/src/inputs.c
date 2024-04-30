@@ -374,14 +374,14 @@ float test_match_custom( int16_t range, int16_t raw )
 
 void control_input(void)
 {
-	Str_in_point* inputs_in;
+	Str_in_point* _inputs;
 //	In_aux *inx;
 	uint8_t point = 0;
 	uint32_t sample;
 //	uint8_t max_input;
 	uint8_t temp;	
 	uint8_t shift = 1;
-	inputs_in = inputs;
+	_inputs = inputs;
 //	inx = in_aux;
 	chip_info[ 1 ] = 42;
 	shift = (chip_info[ 1 ] >= 42)?4:1;
@@ -393,33 +393,33 @@ void control_input(void)
 			if (point < get_max_input())
 			{
 #ifdef MANUAL_JUMPER
-				input_type[ point ] = inputs_in->decom >> 4;
+				input_type[ point ] = _inputs->decom >> 4;
 #endif
-				if ((inputs_in->range >= table1) && (inputs_in->range <= table5))
+				if ((_inputs->range >= table1) && (_inputs->range <= table5))
 				{
-					input_type[ point ] = (inputs_in->decom >> 4 == 0)?INPUT_THERM:(inputs_in->decom >> 4);
+					input_type[ point ] = (_inputs->decom >> 4 == 0)?INPUT_THERM:(_inputs->decom >> 4);
 				}		
 				else 
 				{
-					if (inputs_in -> digital_analog == 0)
+					if (_inputs -> digital_analog == 0)
 					{
 						input_type[ point ] = INPUT_THERM;
 					}
 					else
 					{
-						if ((inputs_in->range == V0_5) || (inputs_in->range == P0_100_0_5V)) // 0-_5v
+						if ((_inputs->range == V0_5) || (_inputs->range == P0_100_0_5V)) // 0-_5v
 						{
 							input_type[ point ] = INPUT_V0_5;				
 						}
-						else if ((inputs_in->range == V0_10_IN) || (inputs_in->range == P0_100_0_10V))   // 0-10v
+						else if ((_inputs->range == V0_10_IN) || (_inputs->range == P0_100_0_10V))   // 0-10v
 						{
 							input_type[ point ] = INPUT_0_10V;
 						}
-						else if ((inputs_in->range == I0_20ma) || (inputs_in->range == P0_100_4_20ma))
+						else if ((_inputs->range == I0_20ma) || (_inputs->range == P0_100_4_20ma))
 						{
 							input_type[ point ] = INPUT_I0_20ma;
 						}
-						else if ((inputs_in->range == PT1000_200_300DegC) || (inputs_in->range == PT1000_200_570DegF)) // 0-_5v
+						else if ((_inputs->range == PT1000_200_300DegC) || (_inputs->range == PT1000_200_570DegF)) // 0-_5v
 						{
 							input_type[ point ] = INPUT_1KPT;				
 						}
@@ -429,14 +429,14 @@ void control_input(void)
 						}
 					}
 				}
-				temp = (inputs_in->decom & 0x0F) | (input_type[ point ] << 4);
-				inputs_in->decom = temp;
+				temp = (_inputs->decom & 0x0F) | (input_type[ point ] << 4);
+				_inputs->decom = temp;
 
 				if (point < get_max_internal_input())
 				{
-					inputs_in->sub_id = 0;
-					inputs_in->sub_product = 0;
-					inputs_in->sub_number = 0;
+					_inputs->sub_id = 0;
+					_inputs->sub_product = 0;
+					_inputs->sub_number = 0;
 				
 					if (input_type[ point ] != input_type1[ point ])
 					{	
@@ -445,43 +445,43 @@ void control_input(void)
 						Set_Input_Type( point );
 					}
 				
-					if (inputs_in->auto_manual == 0)  // auto			 
+					if (_inputs->auto_manual == 0)  // auto			 
 					{
 						// raw value			
-						if (inputs_in->range != not_used_input)
+						if (_inputs->range != not_used_input)
 						{				
 							sample = get_input_raw(point);//input_raw[ point ];
 						
-							if ( inputs_in -> digital_analog == 0)  // digital
+							if ( _inputs -> digital_analog == 0)  // digital
 							{						
-								temp = (inputs_in->decom & 0xF0) | IN_NORMAL;
-								inputs_in->decom = temp;
+								temp = (_inputs->decom & 0xF0) | IN_NORMAL;
+								_inputs->decom = temp;
 							
-								if (inputs_in->range >= ON_OFF  && inputs_in->range <= HIGH_LOW)  // control 0=OFF 1=ON
+								if (_inputs->range >= ON_OFF  && _inputs->range <= HIGH_LOW)  // control 0=OFF 1=ON
 								{
-									inputs_in->control = (sample > (512 * shift) ) ? 1 : 0;
+									_inputs->control = (sample > (512 * shift) ) ? 1 : 0;
 								}
 								else
 								{
-									inputs_in->control = (sample < (512 * shift) ) ? 0 : 1;					
+									_inputs->control = (sample < (512 * shift) ) ? 0 : 1;					
 								}
 							
-								if (inputs_in->range >= custom_digital1 && inputs_in->range <= custom_digital8)
+								if (_inputs->range >= custom_digital1 && _inputs->range <= custom_digital8)
 								{
-									inputs_in->control = (sample < (512 * shift) ) ? 0 : 1;	
+									_inputs->control = (sample < (512 * shift) ) ? 0 : 1;	
 								}
 								
-								inputs_in->value = swap_double(inputs_in->control ? 1000L : 0);
-								sample = inputs_in->control ? 1000L : 0;
+								_inputs->value = swap_double(_inputs->control ? 1000L : 0);
+								sample = _inputs->control ? 1000L : 0;
 							}
-							else if (inputs_in -> digital_analog == 1)	// analog
+							else if (_inputs -> digital_analog == 1)	// analog
 							{											
-								temp = (inputs_in->decom & 0xF0) | IN_NORMAL;
-								inputs_in->decom = temp;
+								temp = (_inputs->decom & 0xF0) | IN_NORMAL;
+								_inputs->decom = temp;
 								// add filter 
 								//sample = Filter(point,sample);	
 								
-								switch(inputs_in->range)
+								switch(_inputs->range)
 								{
 									case Y3K_40_150DegC:
 									case Y3K_40_300DegF:
@@ -494,16 +494,16 @@ void control_input(void)
 									{
 										if (get_input_raw(point) > 1000 * shift)   
 										{
-											temp = (inputs_in->decom & 0xF0) | IN_OPEN;
-											inputs_in->decom = temp;
+											temp = (_inputs->decom & 0xF0) | IN_OPEN;
+											_inputs->decom = temp;
 										}
 										else if (get_input_raw(point) < 20)  
 										{ 
-											temp = (inputs_in->decom & 0xF0) | IN_SHORT;
-											inputs_in->decom = temp;
+											temp = (_inputs->decom & 0xF0) | IN_SHORT;
+											_inputs->decom = temp;
 										}				
 								
-										sample = get_input_value_by_range( inputs_in->range, sample );
+										sample = get_input_value_by_range( _inputs->range, sample );
 										break;
 									}
 									case PT1000_200_300DegC:
@@ -511,15 +511,15 @@ void control_input(void)
 									{
 										if (get_input_raw(point)  > 4000)    
 										{
-											temp = (inputs_in->decom & 0xF0) | IN_OPEN;
-											inputs_in->decom = temp;
+											temp = (_inputs->decom & 0xF0) | IN_OPEN;
+											_inputs->decom = temp;
 										}
 										else if (get_input_raw(point) < 50 * shift) 
 										{ 
-											temp = (inputs_in->decom & 0xF0) | IN_SHORT;
-											inputs_in->decom = temp;
+											temp = (_inputs->decom & 0xF0) | IN_SHORT;
+											_inputs->decom = temp;
 										}				
-										sample = get_input_value_by_range( inputs_in->range, sample );
+										sample = get_input_value_by_range( _inputs->range, sample );
 										break;
 									}
 									case V0_5:
@@ -570,7 +570,7 @@ void control_input(void)
 									case table5:
 									{
 										sample = conver_by_unit_custable(point,sample / shift) / 100;
-										sample = 1000l * test_match_custom((int)inputs_in->range, (int)sample);	
+										sample = 1000l * test_match_custom((int)_inputs->range, (int)sample);	
 										//sample = 1000l * sample;
 										break;
 									}
@@ -591,28 +591,28 @@ void control_input(void)
 										break;
 								}
 					
-								//if ( inputs_in->calibration_increment ) 
+								//if ( _inputs->calibration_increment ) 
 								{
-									sample += ((!inputs_in->calibration_sign)?100L:-100L)*(inputs_in->calibration_hi * 256 +
-										inputs_in->calibration_lo);;
+									sample += ((!_inputs->calibration_sign)?100L:-100L)*(_inputs->calibration_hi * 256 +
+										_inputs->calibration_lo);;
 								}
 							}
-							inputs_in->value = swap_double( sample );
+							_inputs->value = swap_double( sample );
 						}
 						else  // unused_input
 						{
 							// if range is 0, show raw value
-							temp = (inputs_in->decom & 0xF0) | IN_NORMAL;
-							inputs_in->decom = temp;
+							temp = (_inputs->decom & 0xF0) | IN_NORMAL;
+							_inputs->decom = temp;
 							// if internal input
-							inputs_in->value = (point < get_max_internal_input())?swap_double( (uint32_t)get_input_raw( point ) / shift * 3000 / 1023 ):
+							_inputs->value = (point < get_max_internal_input())?swap_double( (uint32_t)get_input_raw( point ) / shift * 3000 / 1023 ):
 								swap_double( (uint32_t)get_input_raw( point ) );
 						}
 					}
-					else if (inputs_in->auto_manual == 1)	// manual
+					else if (_inputs->auto_manual == 1)	// manual
 					{		
-						temp = (inputs_in->decom & 0xF0) | IN_NORMAL;
-						inputs_in->decom = temp;
+						temp = (_inputs->decom & 0xF0) | IN_NORMAL;
+						_inputs->decom = temp;
 					}
 				}
 				else	// external input
@@ -620,27 +620,27 @@ void control_input(void)
 					// check whether currect id is on line or not
 					if (check_external_in_on_line(point) == 0)  // off-ine
 					{
-						inputs_in->sub_id = 0;
-						inputs_in->sub_product = 0;
-						inputs_in->sub_number = 0;
+						_inputs->sub_id = 0;
+						_inputs->sub_product = 0;
+						_inputs->sub_number = 0;
 					
-						temp = (inputs_in->decom & 0xF0) | IN_NORMAL;
-						inputs_in->decom = temp;
+						temp = (_inputs->decom & 0xF0) | IN_NORMAL;
+						_inputs->decom = temp;
 					}
 				}
 			} 
 			else
 			{
-				inputs_in->sub_id = 0;
-				inputs_in->sub_product = 0;
-				inputs_in->sub_number = 0;
+				_inputs->sub_id = 0;
+				_inputs->sub_product = 0;
+				_inputs->sub_number = 0;
 		
-				temp = (inputs_in->decom & 0xF0) | IN_NORMAL;
-				inputs_in->decom = temp;
+				temp = (_inputs->decom & 0xF0) | IN_NORMAL;
+				_inputs->decom = temp;
 			}
 		}
 		point++;
-		inputs_in++;
+		_inputs++;
 	}
 }
 #endif
