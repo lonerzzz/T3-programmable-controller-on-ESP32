@@ -4,33 +4,30 @@
 
 #define MINI64
 
-#define Byte 		unsigned char
-#define Uint		unsigned int
-#define Ulong		unsigned long
-#define S8_T		char
-#define S16_T		signed short		int
-#define S32_T		signed	long
+#define Byte 		  unsigned char
+#define Uint		   unsigned int
+#define Ulong		  unsigned long
+#define int8_t		 char
+#define int16_t	 signed short		int
+#define int32_t	 signed	long
 
-#define U8_T 		unsigned char
-#define U16_T		unsigned short int
-#define U32_T		unsigned long
+#define uint8_t  unsigned char
+#define uint16_t	unsigned short int
+#define uint32_t	unsigned long
 
+#define uint16   unsigned short int
+#define uint8	   unsigned char
+#define uint32_t	unsigned long
+#define int16    signed short int
 
-#define uint16		unsigned short int
-#define uint8		unsigned char
-#define uint32		unsigned long
-#define int16      signed short int
+#define uint16_t	unsigned short int
+#define uint8_t		unsigned char
+#define uint32_t	unsigned long
 
-#define u16		unsigned short int
-#define u8		unsigned char
-#define u32		unsigned long
-
-
-#define BOOL		unsigned short int
+#define BOOL     unsigned short int
 
 #define TRUE    			1
 #define FALSE   			0
-
 
 #define LOW_BYTE(word)	(U8_T)(word & 0x00FF)
 #define HIGH_BYTE(word)	(U8_T)((word & 0xFF00) >> 8)
@@ -69,12 +66,9 @@
 #define	BIT30		0x40000000
 #define	BIT31		0x80000000
 
-
 #ifndef NULL
  #define NULL ((void *) 0L)
 #endif
-
-
 
 /* Keil compiler user define */
 #define	KEIL_CPL
